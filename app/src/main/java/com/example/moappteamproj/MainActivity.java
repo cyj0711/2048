@@ -3,6 +3,9 @@ package com.example.moappteamproj;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
@@ -12,11 +15,40 @@ public class MainActivity extends AppCompatActivity {
     Tiles tile[][]=new Tiles[4][4]; // 각 Button View와 매칭되는 연산용 배열
     Button buttonAry[][]=new Button[4][4];  // layout에 출력할 Button View
     ArrayList<Tiles> listPosition = new ArrayList<Tiles>(); // 빈 타일중에 랜덤으로 새 타일을 넣기위한 리스트
+    public Direction direction;
+    float downX=0.0f,downY=0.0f;  // 터치(눌렀을 때) 좌표
+    float upX=0.0f,upY=0.0f;  // 터치(땠을 때) 좌표
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        View view = findViewById(R.id.activity_main);
+
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+
+
+                if (action == MotionEvent.ACTION_DOWN)  // 터치 눌렀을 때
+                {
+                    downX=event.getX();
+                    downY=event.getY();
+                }
+                else if(action == MotionEvent.ACTION_UP)    // 터치 땠을 때
+                {
+                    upX=event.getX();
+                    upY=event.getY();
+
+                    direction = findDirection(downX,downY,upX,upY);
+
+                    Log.d("MainActivity",direction.toString());
+                }
+                return true;
+            }
+        });
 
         startGame();
 
@@ -31,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
         while(isEnd()==false) {
             update();
             draw();
-        }
+
+       }
     }
 
     // 매 프레임마다 연산
@@ -55,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
     // 새로운 타일(2 or 4)을 빈 타일에 추가
     void addNewTile()
     {
+        int randomNumber=(int)(Math.random()*listPosition.size());
+
+        listPosition.get(randomNumber).number=2;
 
     }
 
@@ -84,6 +120,43 @@ public class MainActivity extends AppCompatActivity {
         // ===============================================
 
         return true;
+    }
+
+    public Direction findDirection(float downX, float downY, float upX, float upY)
+    {
+        Direction direction=Direction.NONE;
+
+        /*
+              (0,1)                    (UP)
+       (-1,0) (0,0) (1,0)  ==  (LEFT) (NONE) (RIGHT)
+              (0,-1)                  (DOWN)
+        왼쪽 숫자는 x, 오른쪽 숫자는 y 방향계
+        */
+        int x=0,y=0;    // 방향계
+
+        float difX,difY; // down과 up의 차이
+
+        difX=upX-downX;
+        difY=upY-downY;
+
+        if(Math.abs(difX) > Math.abs(difY))     // 옆으로 움직였을 때
+        {
+            if(difX < 0.0f)
+                direction = Direction.LEFT;
+            else
+                direction = Direction.RIGHT;
+        }
+        else if (Math.abs(difX) < Math.abs(difY))   // 위아래로 움직였을 때
+        {
+            if(difY < 0.0f)
+                direction = Direction.UP;
+            else
+                direction = Direction.DOWN;
+        }
+        else    // 안움직였을 때
+            direction = Direction.NONE;
+
+        return direction;
     }
 
     // 처음 초기화
