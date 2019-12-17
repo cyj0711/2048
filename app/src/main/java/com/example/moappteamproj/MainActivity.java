@@ -13,18 +13,22 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    Tiles tile[][]=new Tiles[4][4]; // 각 Button View와 매칭되는 연산용 배열
-    TextView ViewAry[][]=new TextView[4][4];  // layout에 출력할 Button View
+    Tiles[][] tile=new Tiles[4][4]; // 각 Button View와 매칭되는 연산용 배열
+    TextView[][] ViewAry=new TextView[4][4];  // layout에 출력할 Button View
     ArrayList<Tiles> listPosition = new ArrayList<Tiles>(); // 빈 타일중에 랜덤으로 새 타일을 넣기위한 리스트
-    public Direction direction = Direction.NONE;
+    public Direction direction = Direction.NONE;    // 터치 방향
     float downX=0.0f,downY=0.0f;  // 터치(눌렀을 때) 좌표
     float upX=0.0f,upY=0.0f;  // 터치(땠을 때) 좌표
+    final static int[] tileColor={0xFFD6CDC4, 0xFFEEE4DA, 0xFFECE0DC, 0xFFF2B179, 0xFFF59563, 0xFFF57C5F, 0xFFF65D3B, 0xFFEDCE71, 0xFFEDCE61, 0xFFECC850, 0xFFEDC53F, 0xFF3D3A33};  // 타일 색상
+    Score score = new Score();    // 점수 클래스
+    Button ViewCurScore,ViewBestScore;  // 현재 점수, 최고 점수 뷰
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initView();
         View view = findViewById(R.id.activity_main);   // 전체 화면에 대해 터치이벤트를 받음
 
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -45,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
                     direction = findDirection(downX,downY,upX,upY); // 두 터치 좌표를 통해 슬라이드 방향 확인
 
-                    if(isEnd()==false) {
+                    if(!isEnd()) {
                         update();
                         draw();
                     }
@@ -60,56 +64,85 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // 전체 게임 진행
+    // 처음 게임 시작
     public void startGame()
     {
         initTile();
-
         draw();
     }
 
-    // 매 프레임마다 연산
+    // 게임 연산
     public void update()
     {
-
         if(direction != Direction.NONE)
         {
-            if(moveTile(direction))
+            if(moveTile(direction)) {
+                clearDirtyTile();
+                updateBestScore();
                 addNewTile();
+            }
         }
 
     }
 
-    // 매 프레임마다 출력
+    // 게임 출력
     public void draw()
     {
         for(int i=0;i<4;i++)
         {
             for(int j=0;j<4;j++)
             {
-                if(tile[i][j].number == 0)
+                // 타일 숫자 출력
+                if(tile[i][j].getNumber() == 0)
                     ViewAry[i][j].setText("");
                 else
-                    ViewAry[i][j].setText(Integer.toString(tile[i][j].number));
+                    ViewAry[i][j].setText(Integer.toString(tile[i][j].getNumber()));
 
+                // 타일 색깔 지정
+                int colorIndex;
+                if(tile[i][j].getNumber()>0) {
+                    colorIndex = (int) baseLog((double) tile[i][j].getNumber(), 2.0);
+                    if(colorIndex>11)   // 2048 보다 더 큰 숫자들은 2048과 같은 색상 적용
+                        colorIndex=11;
+                }
+                else
+                    colorIndex=0;
+                ViewAry[i][j].setBackgroundColor(tileColor[colorIndex]);
+
+                // 글자 색깔 지정
+                if(tile[i][j].getNumber()>0)
+                {
+                    if(tile[i][j].getNumber() <= 4)
+                        ViewAry[i][j].setTextColor(0xFF776E65);
+                    else
+                        ViewAry[i][j].setTextColor(0xFFFDF4EF);
+                }
             }
         }
+
+        // 점수출력
+        ViewCurScore.setText(Integer.toString(score.getCurrent()));
+        ViewBestScore.setText(Integer.toString(score.getBest()));
     }
 
     // 새로운 타일(2 or 4)을 빈 타일에 추가
     void addNewTile()
     {
+        int tileNumber=2;
         listPosition.clear();   // 이전 턴에서의 list 값이 있으면 안되니 전부 clear
 
         for(int i=0;i<4;i++)
         {
             for(int j=0;j<4;j++)
-                if(tile[i][j].number==0)
+                if(tile[i][j].getNumber()==0)
                     listPosition.add(tile[i][j]);   // 빈 타일이므로 list에 추가
         }
 
+        if((int)(Math.random()*5) == 0)    // 20% 확률로 2대신 4 타일 추가
+            tileNumber=4;
+
         int randomNumber=(int)(Math.random()*listPosition.size());
-        listPosition.get(randomNumber).number=2;
+        listPosition.get(randomNumber).setNumber(tileNumber);    // 빈 타일 리스트중 랜덤으로 타일 추가
 
     }
 
@@ -117,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
     boolean moveTile(Direction direction)
     {
 
-        if(canMove(direction)==false)
+        if(!canMove(direction)) // 터치해도 이동이 안되면 해당 터치 무시
             return false;
 
         switch(direction)
@@ -148,10 +181,10 @@ public class MainActivity extends AppCompatActivity {
             {
                 for(int j=0;j<4;j++)
                 {
-                    if(tile[i][j].number == 0)  // 0은 무시
+                    if(tile[i][j].getNumber() == 0)  // 0은 무시
                         continue;
 
-                    if((tile[i-1][j].number == 0) || (tile[i-1][j].number == tile[i][j].number))    // 윗 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
+                    if((tile[i-1][j].getNumber() == 0) || (tile[i-1][j].getNumber() == tile[i][j].getNumber()))    // 윗 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
                         return true;
                 }
             }
@@ -162,10 +195,10 @@ public class MainActivity extends AppCompatActivity {
             {
                 for(int j=0;j<4;j++)
                 {
-                    if(tile[i][j].number == 0)  // 0은 무시
+                    if(tile[i][j].getNumber() == 0)  // 0은 무시
                         continue;
 
-                    if((tile[i+1][j].number == 0) || (tile[i+1][j].number == tile[i][j].number))    // 아래 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
+                    if((tile[i+1][j].getNumber() == 0) || (tile[i+1][j].getNumber() == tile[i][j].getNumber()))    // 아래 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
                         return true;
                 }
             }
@@ -176,10 +209,10 @@ public class MainActivity extends AppCompatActivity {
             {
                 for(int j=1;j<4;j++)
                 {
-                    if(tile[i][j].number == 0)  // 0은 무시
+                    if(tile[i][j].getNumber() == 0)  // 0은 무시
                         continue;
 
-                    if((tile[i][j-1].number == 0) || (tile[i][j-1].number == tile[i][j].number))    // 왼쪽 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
+                    if((tile[i][j-1].getNumber() == 0) || (tile[i][j-1].getNumber() == tile[i][j].getNumber()))    // 왼쪽 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
                         return true;
                 }
             }
@@ -190,10 +223,10 @@ public class MainActivity extends AppCompatActivity {
             {
                 for(int j=2;j>-1;j--)
                 {
-                    if(tile[i][j].number == 0)  // 0은 무시
+                    if(tile[i][j].getNumber() == 0)  // 0은 무시
                         continue;
 
-                    if((tile[i][j+1].number == 0) || (tile[i][j+1].number == tile[i][j].number))    // 오른쪽 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
+                    if((tile[i][j+1].getNumber() == 0) || (tile[i][j+1].getNumber() == tile[i][j].getNumber()))    // 오른쪽 방향으로 빈 공간이 있거나 합칠 수 있으면 이동 가능
                         return true;
                 }
             }
@@ -208,31 +241,33 @@ public class MainActivity extends AppCompatActivity {
         {
             for (int j=0;j<4;j++)
             {
-                if(tile[i][j].number == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
+                if(tile[i][j].getNumber() == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
                     continue;
 
                 int k = i - 1;
 
-                while(k != -1 && tile[k][j].number == 0) { k--; }   // 현재 타일 제일 위쪽의 빈공간을 찾음
+                while(k != -1 && tile[k][j].getNumber() == 0) { k--; }   // 현재 타일 제일 위쪽의 빈공간을 찾음
 
 
                 if(k== -1)  // 제일 위에 비어있으면 제일 위로 타일 이동
                 {
-                    tile[k+1][j].number = tile[i][j].number;
-                    tile[i][j].number = 0;
+                    tile[k+1][j].setNumber(tile[i][j].getNumber());
+                    tile[i][j].setNumber(0);
                 }
                 else    // 위에 다른 타일이 있으면
                 {
-                    if(tile[k][j].number == tile[i][j].number)  // 위에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
+                    if(tile[k][j].getNumber() == tile[i][j].getNumber())  // 위에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
                     {
-                        tile[k][j].number = tile[k][j].number<<1;
-                        tile[i][j].number = 0;
+                        tile[k][j].setNumber(tile[k][j].getNumber()<<1);
+                        score.setCurrent(score.getCurrent()+tile[k][j].getNumber());    // 합친거 점수에 반영
+                        tile[k][j].setNumber(tile[k][j].getNumber()+1); // 세 개 이상의 타일이 한번에 안합쳐지도록 + 1
+                        tile[i][j].setNumber(0);
                     }
                     else    // 서로 다르면 그냥 그 밑으로 옮긴다.
                     {
-                        int temp = tile[i][j].number;
-                        tile[i][j].number = 0;
-                        tile[k+1][j].number = temp;
+                        int temp = tile[i][j].getNumber();
+                        tile[i][j].setNumber(0);
+                        tile[k+1][j].setNumber(temp);
                     }
 
                 }
@@ -241,39 +276,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     void moveDown()
     {
         for(int i=2; i>-1;i--)
         {
             for (int j=0;j<4;j++)
             {
-                if(tile[i][j].number == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
+                if(tile[i][j].getNumber() == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
                     continue;
 
                 int k = i + 1;
 
-                while(k != 4 && tile[k][j].number == 0) { k++; }   // 현재 타일 제일 위쪽의 빈공간을 찾음
+                while(k != 4 && tile[k][j].getNumber() == 0) { k++; }   // 현재 타일 제일 아래쪽의 빈공간을 찾음
 
 
-                if(k == 4)  // 제일 위에 비어있으면 제일 위로 타일 이동
+                if(k == 4)  // 제일 아래에 비어있으면 제일 아래로 타일 이동
                 {
-                    tile[k-1][j].number = tile[i][j].number;
-                    tile[i][j].number = 0;
+                    tile[k-1][j].setNumber(tile[i][j].getNumber());
+                    tile[i][j].setNumber(0);
                 }
-                else    // 위에 다른 타일이 있으면
+                else    // 아래에 다른 타일이 있으면
                 {
-                    if(tile[k][j].number == tile[i][j].number)  // 위에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
+                    if(tile[k][j].getNumber() == tile[i][j].getNumber())  // 아래에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
                     {
-                        tile[k][j].number = tile[k][j].number<<1;
-                        tile[i][j].number = 0;
+                        tile[k][j].setNumber(tile[k][j].getNumber()<<1);
+                        score.setCurrent(score.getCurrent()+tile[k][j].getNumber());    // 합친거 점수에 반영
+                        tile[k][j].setNumber(tile[k][j].getNumber()+1); // 세 개 이상의 타일이 한번에 안합쳐지도록 + 1
+                        tile[i][j].setNumber(0);
                     }
-                    else    // 서로 다르면 그냥 그 밑으로 옮긴다.
+                    else    // 서로 다르면 그냥 그 위으로 옮긴다.
                     {
-                        int temp = tile[i][j].number;
-                        tile[i][j].number = 0;
-                        tile[k-1][j].number = temp;
+                        int temp = tile[i][j].getNumber();
+                        tile[i][j].setNumber(0);
+                        tile[k-1][j].setNumber(temp);
                     }
 
                 }
@@ -288,31 +323,33 @@ public class MainActivity extends AppCompatActivity {
         {
             for (int j=1;j<4;j++)
             {
-                if(tile[i][j].number == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
+                if(tile[i][j].getNumber() == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
                     continue;
 
                 int k = j - 1;
 
-                while(k != -1 && tile[i][k].number == 0) { k--; }   // 현재 타일 제일 위쪽의 빈공간을 찾음
+                while(k != -1 && tile[i][k].getNumber() == 0) { k--; }   // 현재 타일 제일 왼쪽의 빈공간을 찾음
 
 
-                if(k == -1)  // 제일 위에 비어있으면 제일 위로 타일 이동
+                if(k == -1)  // 제일 왼쪽에 비어있으면 제일 왼쪽으로 타일 이동
                 {
-                    tile[i][k+1].number = tile[i][j].number;
-                    tile[i][j].number = 0;
+                    tile[i][k+1].setNumber(tile[i][j].getNumber());
+                    tile[i][j].setNumber(0);
                 }
-                else    // 위에 다른 타일이 있으면
+                else    // 왼쪽에 다른 타일이 있으면
                 {
-                    if(tile[i][k].number == tile[i][j].number)  // 위에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
+                    if(tile[i][k].getNumber() == tile[i][j].getNumber())  // 왼쪽에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
                     {
-                        tile[i][k].number = tile[i][k].number<<1;
-                        tile[i][j].number = 0;
+                        tile[i][k].setNumber(tile[i][k].getNumber()<<1);
+                        score.setCurrent(score.getCurrent()+tile[i][k].getNumber());    // 합친거 점수에 반영
+                        tile[i][k].setNumber(tile[i][k].getNumber()+1); // 세 개 이상의 타일이 한번에 안합쳐지도록 + 1
+                        tile[i][j].setNumber(0);
                     }
-                    else    // 서로 다르면 그냥 그 밑으로 옮긴다.
+                    else    // 서로 다르면 그냥 그 옆으로 옮긴다.
                     {
-                        int temp = tile[i][j].number;
-                        tile[i][j].number = 0;
-                        tile[i][k+1].number = temp;
+                        int temp = tile[i][j].getNumber();
+                        tile[i][j].setNumber(0);
+                        tile[i][k+1].setNumber(temp);
                     }
 
                 }
@@ -327,31 +364,33 @@ public class MainActivity extends AppCompatActivity {
         {
             for (int j=2;j>-1;j--)
             {
-                if(tile[i][j].number == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
+                if(tile[i][j].getNumber() == 0)  // 빈 타일은 무시하고 바로 다음 타일 선택
                     continue;
 
                 int k = j + 1;
 
-                while(k != 4 && tile[i][k].number == 0) { k++; }   // 현재 타일 제일 위쪽의 빈공간을 찾음
+                while(k != 4 && tile[i][k].getNumber() == 0) { k++; }   // 현재 타일 제일 오른쪽의 빈공간을 찾음
 
 
-                if(k == 4)  // 제일 위에 비어있으면 제일 위로 타일 이동
+                if(k == 4)  // 제일 오른쪽에 비어있으면 제일 오른쪽으로 타일 이동
                 {
-                    tile[i][k-1].number = tile[i][j].number;
-                    tile[i][j].number = 0;
+                    tile[i][k-1].setNumber(tile[i][j].getNumber());
+                    tile[i][j].setNumber(0);
                 }
-                else    // 위에 다른 타일이 있으면
+                else    // 오른쪽에 다른 타일이 있으면
                 {
-                    if(tile[i][k].number == tile[i][j].number)  // 위에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
+                    if(tile[i][k].getNumber() == tile[i][j].getNumber())  // 오른쪽에 있는 타일이랑 숫자가 같아서 조합되는 경우 두 타일을 합친다.
                     {
-                        tile[i][k].number = tile[i][k].number<<1;
-                        tile[i][j].number = 0;
+                        tile[i][k].setNumber(tile[i][k].getNumber()<<1);
+                        score.setCurrent(score.getCurrent()+tile[i][k].getNumber());    // 합친거 점수에 반영
+                        tile[i][k].setNumber(tile[i][k].getNumber()+1); // 세 개 이상의 타일이 한번에 안합쳐지도록 + 1
+                        tile[i][j].setNumber(0);
                     }
-                    else    // 서로 다르면 그냥 그 밑으로 옮긴다.
+                    else    // 서로 다르면 그냥 그 옆으로 옮긴다.
                     {
-                        int temp = tile[i][j].number;
-                        tile[i][j].number = 0;
-                        tile[i][k-1].number = temp;
+                        int temp = tile[i][j].getNumber();
+                        tile[i][j].setNumber(0);
+                        tile[i][k-1].setNumber(temp);
                     }
 
                 }
@@ -368,25 +407,50 @@ public class MainActivity extends AppCompatActivity {
             for(int j=0;j<4;j++)
             {
                 // 빈자리가 하나라도 있으면 아직 게임 안끝남(return false)
-                if(tile[i][j].number==0) {
+                if(tile[i][j].getNumber()==0) {
                     return false;
                 }
             }
         }
 
-        // ===============================================
-        // 각 타일의 상하좌우가 전부 해당 타일이랑 전부 다른숫자일때,(움직여도 조합이 안될때) 게임오버 하는거에 대한 코드 추가하기
-        // ===============================================
+        // 각 타일의 상하좌우가 전부 해당 타일이랑 전부 다른숫자일때,(움직여도 조합이 안될때) 게임오버 확인
+        for(int i=0;i<4;i++)
+            for(int j=0;j<4;j++)
+            {
+                if(i>0) // 타일의 위쪽과 비교
+                {
+                    if(tile[i][j].getNumber() == tile[i-1][j].getNumber())
+                        return false;
+                }
+                if(i<3)    // 타일의 아래와 비교
+                {
+                    if(tile[i][j].getNumber() == tile[i+1][j].getNumber())
+                        return false;
+                }
+                if (j>0)   // 타일의 왼쪽과 비교
+                {
+                    if (tile[i][j].getNumber() == tile[i][j - 1].getNumber())
+                        return false;
+                }
+                if (j<3)   // 타일의 오른쪽과 비교
+                {
+                    if(tile[i][j].getNumber()==tile[i][j+1].getNumber())
+                        return false;
+                }
+
+            }
 
         return true;
     }
 
+    // 터치 슬라이딩 방향 확인
     public Direction findDirection(float downX, float downY, float upX, float upY)
     {
-        Direction direction=Direction.NONE;
+        Direction direction;
 
         float difX,difY; // down과 up의 차이
 
+        // 눌렀을 때와 떘을 때 좌표 차이 확인
         difX=upX-downX;
         difY=upY-downY;
 
@@ -410,8 +474,51 @@ public class MainActivity extends AppCompatActivity {
         return direction;
     }
 
+    // 2의 제곱수의 지수를 구하기위한 log 함수
+    static double baseLog(double x, double base) {
+
+        return Math.log10(x) / Math.log10(base);
+
+    }
+
+    // 합쳐진 타일에 1을 더한걸 다시 1을 빼준다.
+    void clearDirtyTile()
+    {
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<4;j++)
+                if(tile[i][j].getNumber() % 2 == 1)
+                    tile[i][j].setNumber(tile[i][j].getNumber()-1);
+        }
+    }
+
+    // 최고기록 갱신
+    void updateBestScore()
+    {
+        if(score.getCurrent()>score.getBest())
+            score.setBest(score.getCurrent());
+    }
+
     // 처음 초기화
     public void initTile()
+    {
+        // 4*4 Button에 매치되는 4*4 tile 배열 동기화
+
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<4;j++)
+            {
+                tile[i][j]=new Tiles(i,j);
+            }
+        }
+
+        // 처음 시작 시 타일 두개 추가
+        addNewTile();
+        addNewTile();
+    }
+
+    // 뷰 초기화
+    void initView()
     {
         // 각 버튼에 대해 layout과 동기화
 
@@ -435,17 +542,8 @@ public class MainActivity extends AppCompatActivity {
         ViewAry[3][2]=(TextView)findViewById(R.id.ary32);
         ViewAry[3][3]=(TextView)findViewById(R.id.ary33);
 
-        // 4*4 Button에 매치되는 4*4 tile 배열 동기화
+        ViewCurScore=(Button)findViewById(R.id.currentScore);
+        ViewBestScore=(Button)findViewById(R.id.bestScore);
 
-        for(int i=0;i<4;i++)
-        {
-            for(int j=0;j<4;j++)
-            {
-                tile[i][j]=new Tiles(i,j);
-            }
-        }
-
-        addNewTile();
-        addNewTile();
     }
 }

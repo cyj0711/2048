@@ -18,6 +18,7 @@
         android:layout_weight="1"
         android:orientation="horizontal"
         >
+        <!-- 게임 타이틀 -->
         <TextView
             android:textColor="#776E65"
             android:layout_width="wrap_content"
@@ -26,10 +27,12 @@
             android:textSize="45dp"
             android:layout_weight="2"
             />
+        <!-- 여백 -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"/>
+        <!-- 현재 점수 -->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,6 +42,7 @@
             android:layout_marginRight="5dp"
             android:textColor="@color/colorBG"
             android:text="0"/>
+        <!-- 최고 점수 -->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,6 +53,9 @@
             android:text="0"/>
 
     </LinearLayout>
+
+
+    <!-- 인사말 텍스트 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,9 +77,12 @@
             android:textSize="18dp"/>
 
     </LinearLayout>
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <!-- 재시작 버튼 -->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,10 +91,12 @@
             android:textAlignment="textStart"
             android:textColor="#fe8205"
             android:textSize="25dp"/>
+        <!-- 여백 -->
         <TextView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"/>
+        <!-- 취소 버튼 -->
         <Button
             android:background="@color/colorBG"
             android:layout_width="wrap_content"
@@ -94,6 +106,8 @@
             android:textColor="#fe8205"
             />
     </LinearLayout>
+
+    <!-- 게임 판 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -101,6 +115,8 @@
         android:layout_marginBottom="25dp"
         android:orientation="vertical"
         android:background="@color/colorUI">
+
+        <!-- 0 행 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_marginLeft="8dp"
@@ -114,6 +130,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary00"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -123,6 +140,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary01"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -132,6 +150,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary02"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -141,10 +160,13 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary03"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
         </LinearLayout>
+
+        <!-- 1 행 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -157,6 +179,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary10"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -166,6 +189,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary11"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -175,6 +199,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary12"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -184,10 +209,13 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary13"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
         </LinearLayout>
+
+        <!-- 2 행 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -200,6 +228,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary20"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -209,6 +238,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary21"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -218,6 +248,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary22"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -227,10 +258,13 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary23"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
         </LinearLayout>
+
+        <!-- 3 행 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -243,6 +277,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary30"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -252,6 +287,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary31"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -261,6 +297,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary32"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
@@ -270,10 +307,10 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ary33"
                 android:gravity="center"
+                android:textSize="24sp"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
         </LinearLayout>
-
     </LinearLayout>
 </LinearLayout>

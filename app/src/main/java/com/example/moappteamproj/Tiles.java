@@ -2,9 +2,9 @@ package com.example.moappteamproj;
 
 public class Tiles {
 
-    public int number;
-    public int row; // 행 좌표
-    public int col; // 열 좌표
+    private int number;
+    private int row; // 행 좌표
+    private int col; // 열 좌표
 
 
     public Tiles(int row, int col)
