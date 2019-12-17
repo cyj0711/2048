@@ -109,34 +109,38 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1">
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary00"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary01"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary02"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary03"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
@@ -148,34 +152,38 @@
             android:layout_marginLeft="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1">
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary10"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary11"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary12"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary13"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
@@ -187,34 +195,38 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_weight="1">
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary20"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary21"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary22"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary23"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
@@ -226,34 +238,38 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_weight="1">
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary30"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary31"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary32"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 android:layout_marginRight="8dp"
                 />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/ary33"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:background="@color/colorTile"
                 />
