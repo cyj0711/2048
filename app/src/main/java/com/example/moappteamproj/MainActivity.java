@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public void startGame()
     {
         initTile();
+        saveTile(); // 시작할 때 tile은 undo 해도 그대로임
         draw();
     }
 
@@ -152,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(!canMove(direction)) // 터치해도 이동이 안되면 해당 터치 무시
             return false;
+
+        // 움직이기 전에 undo 로 사용할 타일 저장
+        saveTile();
 
         switch(direction)
         {
@@ -474,6 +478,30 @@ public class MainActivity extends AppCompatActivity {
         return direction;
     }
 
+    // restart 버튼 누르면 게임 새로 세팅
+    public void restart(View v)
+    {
+        startGame();
+    }
+
+    // undo 버튼 누르면 바로 이전 턴으로 되돌아감
+    public void undo(View v)
+    {
+        //if(!canUndo)    // undo를 할 수 없는 상태면 무시
+            //return;
+
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<4;j++)
+            {
+                tile[i][j].setNumber(tile[i][j].getPreviousNumber());
+            }
+        }
+        score.setCurrent(score.getPreviousSocre());
+
+        draw();
+    }
+
     // 2의 제곱수의 지수를 구하기위한 log 함수
     static double baseLog(double x, double base) {
 
@@ -492,6 +520,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void saveTile()
+    {
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<4;j++)
+            {
+                tile[i][j].setPreviousNumber(tile[i][j].getNumber());
+            }
+        }
+        score.setPreviousSocre(score.getCurrent());
+    }
+
     // 최고기록 갱신
     void updateBestScore()
     {
@@ -508,9 +548,11 @@ public class MainActivity extends AppCompatActivity {
         {
             for(int j=0;j<4;j++)
             {
-                tile[i][j]=new Tiles(i,j);
+                tile[i][j]=new Tiles();
             }
         }
+
+        score.setCurrent(0);
 
         // 처음 시작 시 타일 두개 추가
         addNewTile();
