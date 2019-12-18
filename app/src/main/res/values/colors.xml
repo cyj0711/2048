@@ -6,4 +6,5 @@
     <color name="colorUI">#BBADA0</color>
     <color name="colorBG">#F9F6F1</color>
     <color name="colorTile">#D6CDC4</color>
+    <color name="colorTitle">#776E65</color>
 </resources>

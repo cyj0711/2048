@@ -20,7 +20,7 @@
         >
         <!-- 게임 타이틀 -->
         <TextView
-            android:textColor="#776E65"
+            android:textColor="@color/colorTitle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="2048"

@@ -145,6 +145,12 @@ public class MainActivity extends AppCompatActivity {
         int randomNumber=(int)(Math.random()*listPosition.size());
         listPosition.get(randomNumber).setNumber(tileNumber);    // 빈 타일 리스트중 랜덤으로 타일 추가
 
+        // 새 타일을 추가했는데 타일이 꽉차면 게임오버
+        if(isEnd())
+        {
+            showGameOver();
+        }
+
     }
 
     // 입력받은 방향에 맞춰 타일 이동
@@ -537,6 +543,13 @@ public class MainActivity extends AppCompatActivity {
     {
         if(score.getCurrent()>score.getBest())
             score.setBest(score.getCurrent());
+    }
+
+    // 게임오버 창 표시
+    void showGameOver()
+    {
+        DialogGameOver e = DialogGameOver.getInstance();
+        e.show(getSupportFragmentManager(),DialogGameOver.TAG_EVENT_DIALOG);
     }
 
     // 처음 초기화
